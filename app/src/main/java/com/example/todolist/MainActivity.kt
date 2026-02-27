@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material3.Button
@@ -43,17 +45,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.example.todolist.ui.theme.TODOlistTheme
+import java.nio.file.WatchEvent
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             TODOlistTheme {
                 Surface (modifier = Modifier.fillMaxSize()) {
-                    TextInputArea()
+                    enableEdgeToEdge()
+                    ShoppingListApp()
                 }
             }
         }
@@ -62,104 +65,11 @@ class MainActivity : ComponentActivity() {
 
 }
 
-@Composable
-fun TextInputArea () {
-
-    var inputValue by remember { mutableStateOf("") }
-    var outputValue by remember { mutableStateOf("") }
-
-    var inputUnit by remember { mutableStateOf("cm") }
-    var outputUnit by remember { mutableStateOf("cm 센치미터") }
-
-    var isExpand by remember { mutableStateOf(false) }
-    var onExpand by remember { mutableStateOf(false) }
-
-    val conversion = remember { mutableStateOf(0.01) }
-
-    val customTextStyle = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontSize = 16.sp,
-        color = Color.Black
-    )
-    fun convertUnits() {
-        val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0;
-        val result = (inputValueDouble * conversion.value * 100.0).roundToInt() / 100.0
-        outputValue = result.toString()
-    }
-
-    Column(Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("")
-        Spacer(Modifier.height(16.dp))
-        OutlinedTextField(value = inputValue, onValueChange = {
-            inputValue = it
-        }, label = {Text("Enter!")})
-        Spacer(Modifier.height(16.dp))
-
-        Row {
-            Box {
-                Button(onClick = { isExpand = true }) {
-                    Text("Select");
-                    Icon(
-                        Icons.Outlined.ArrowDropDown,
-                        contentDescription = "unit dropdown"
-                    )
-                }
-                DropdownMenu(expanded = isExpand, {
-                    isExpand = false
-                }) {
-                    DropdownMenuItem({ Text("cm 센치미터") }, {
-                        isExpand = false
-                        inputUnit = "cm"
-                        conversion.value = 0.01
-                        convertUnits()
-                    })
-                    DropdownMenuItem({ Text("mm 밀리미터") }, {
-                        isExpand = false
-                        inputUnit = "mm"
-                        conversion.value = 0.001
-                        convertUnits()
-                    })
-                    DropdownMenuItem({ Text("m 미터") }, {
-                        isExpand = false
-                        inputUnit = "M"
-                        conversion.value = 1.0
-                        convertUnits()
-                    })
-                    DropdownMenuItem({ Text("km 칼로미터") }, {
-                        isExpand = false
-                        inputUnit = "KM"
-                        conversion.value = 100.0
-                        convertUnits()
-                    })
-                }
-            }
-            Spacer(Modifier.width(12.dp))
-            Box{
-                Button(onClick = {onExpand = true}){
-                    Text("Select")
-                    Icon(
-                        Icons.Outlined.ArrowDropDown,
-                        contentDescription = "unit dropdown")}
-                DropdownMenu(expanded = onExpand, {
-                    onExpand = false
-                }) {
-                    DropdownMenuItem({ Text("cm")}, {})
-                    DropdownMenuItem({ Text("mm")}, {})
-                    DropdownMenuItem({ Text("m")}, {})
-                    DropdownMenuItem({ Text("km")}, {})
-                }
-            }
-        }
-        Text("RESUlt : ${outputValue}", TextStyle = MaterialTheme.typography.headlineMedium)
-    }
-    }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewApp() {
     TODOlistTheme {
-        TextInputArea()
+        ShoppingListApp()
     }
 }
